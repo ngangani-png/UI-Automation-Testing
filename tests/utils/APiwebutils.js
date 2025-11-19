@@ -15,13 +15,13 @@ class Apiwebutils {
     const token = await resposeJson.token;
     return token;
   }
-  async creatorder(resposeoder) {
+  async creatorder(oderPayload) {
     let orderId = {};
     orderId.token = await this.gettoken();
     const responseoder = await this.context.post(
       "https://rahulshettyacademy.com/api/ecom/order/create-order",
       {
-        data: resposeoder,
+        data: oderPayload,
         headers: {
           Authorization: orderId.token,
           "content-type": "application/json",
