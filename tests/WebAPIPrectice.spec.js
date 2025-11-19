@@ -1,6 +1,7 @@
 const { test, expect, request } = require("@playwright/test");
+
+const { Apiwebutils } = require("../utils/APiwebutils");
 let orderId;
-let token;
 const logindata = {
   userEmail: "neelgangani@yopmail.com",
   userPassword: "Test@123",
@@ -16,36 +17,14 @@ const oderPayload = {
 
 test.beforeAll("login API", async () => {
   const context = await request.newContext();
-  const loginstatus = await context.post(
-    "https://rahulshettyacademy.com/api/ecom/auth/login",
-    {
-      data: logindata,
-    }
-  );
-  expect(loginstatus.ok()).toBeTruthy();
-  const resposeJson = await loginstatus.json();
-  token = await resposeJson.token;
+  const logintoken = new Apiwebutils(context, logindata);
+  orderId = await logintoken.creatorder(oderPayload);
 });
 
-test("@Webst Client App login", async ({ page, request }) => {
+test("@Webst Client App login", async ({ page }) => {
   await page.addInitScript((value) => {
     window.localStorage.setItem("token", value);
-  }, token);
-
-  // second test case
-  const responseoder = await request.post(
-    "https://rahulshettyacademy.com/api/ecom/order/create-order",
-    {
-      data: oderPayload,
-      headers: {
-        Authorization: token,
-        "content-type": "application/json",
-      },
-    }
-  );
-  const resposnejson = await responseoder.json();
-  orderId = resposnejson.orders[0];
-  expect(orderId).toBeTruthy();
+  }, orderId.token);
 
   await page.goto("https://rahulshettyacademy.com/client");
 
@@ -55,11 +34,11 @@ test("@Webst Client App login", async ({ page, request }) => {
 
   for (let i = 0; i < (await rows.count()); ++i) {
     const rowOrderId = await rows.nth(i).locator("th").textContent();
-    if (orderId.includes(rowOrderId)) {
+    if (orderId.orderIndex.includes(rowOrderId)) {
       await rows.nth(i).locator("button").first().click();
       break;
     }
   }
   const orderIdDetails = await page.locator(".col-text").textContent();
-  expect(orderId.includes(orderIdDetails)).toBeTruthy();
+  expect(orderId.orderIndex.includes(orderIdDetails)).toBeTruthy();
 });
