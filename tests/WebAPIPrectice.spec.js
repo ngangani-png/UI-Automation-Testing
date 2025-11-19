@@ -1,6 +1,6 @@
 const { test, expect, request } = require("@playwright/test");
 
-const { Apiwebutils } = require("../utils/APiwebutils");
+const { Apiwebutils } = require("./utils/Apiwebutils");
 let orderId;
 const logindata = {
   userEmail: "neelgangani@yopmail.com",
