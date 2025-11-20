@@ -1,6 +1,6 @@
 const { test, expect, request } = require("@playwright/test");
 
-const { Apiwebutils } = require("./utils/Apiwebutils");
+const { Apiwebutils } = require("./utils/APiwebutils");
 let orderId;
 const logindata = {
   userEmail: "neelgangani@yopmail.com",
@@ -25,7 +25,7 @@ test("@Webst Client App login", async ({ page }) => {
   await page.addInitScript((value) => {
     window.localStorage.setItem("token", value);
   }, orderId.token);
-
+  await page.pause();
   await page.goto("https://rahulshettyacademy.com/client");
 
   await page.locator("button[routerlink*='myorders']").click();
